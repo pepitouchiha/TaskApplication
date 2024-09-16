@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
@@ -16,24 +15,33 @@ def home(request):
 def signup(request):
     if request.method == 'GET':
         return render(request, "signup.html", {
-            'form': UserCreationForm
+            'form': UserCreationForm()
         })
     else:
         if request.POST['password1'] == request.POST['password2']:
+            if User.objects.filter(email=request.POST['email']).exists():
+                return render(request, "signup.html", {
+                    'form': UserCreationForm(),
+                    'error': "Email is already in use!"
+                })
             try:
-                user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
+                user = User.objects.create_user(
+                    username=request.POST['username'],
+                    password=request.POST['password1'],
+                    email=request.POST['email']
+                )
                 user.save()
                 login(request, user)
                 return redirect('tasks')
             except IntegrityError:
                 return render(request, "signup.html", {
-                    'form': UserCreationForm,
-                    'error': "User already exist!"
+                    'form': UserCreationForm(),
+                    'error': "User already exists!"
                 })
         return render(request, "signup.html", {
-            'form': UserCreationForm,
-            'error': "Password do not match!"
-            })
+            'form': UserCreationForm(),
+            'error': "Passwords do not match!"
+        })
 
 @login_required    
 def tasks(request):

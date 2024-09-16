@@ -9,6 +9,10 @@
                 <div class="text-danger">{{error}}</div>
                 {% csrf_token %}
                 <div class="mb-3">
+                    <label for="user_email">Email</label>
+                    <input type="user_email" name="email" class="form-control" placeholder="example@gmail.com" id="user_email">
+                </div>
+                <div class="mb-3">
                     <label for="username">Username</label>
                     <input type="text" name="username" class="form-control" placeholder="Write your username" id="username">
                 </div>
